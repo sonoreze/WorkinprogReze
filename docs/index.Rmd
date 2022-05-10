@@ -3,27 +3,34 @@ title: "Tags"
 author: "Tristan Lorino"
 date: '2022-05-09'
 output: html_document
-always_allow_html: true
 #runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-library(here)
-library(stringr)
-library(sf)
-library(sp)
-library(leaflet)
-library(viridis)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+knitr::opts_chunk$set(cache =FALSE)
+options(OutDec=",")
+Sys.setlocale("LC_CTYPE","fr_FR.UTF-8")
+```
+
+```{r,echo=FALSE}
+if (!require("pacman")) install.packages("pacman")
+library(pacman)
+pacman::p_load(here,thematic,lubridate,dplyr,tidyr,stringr,ggplot2,ggforce,forcats,rgdal,sp,sf,
+               rgeos,geoR,tidyr,devtools,leaflet,leaflet.extras,jsonlite,RColorBrewer,
+               viridis,forcats,mapview,scales,flexdashboard,fontawesome,rprojroot,ggthemes,plotly,spacetime,gstat)
 #library(webshot)
 #webshot::install_phantomjs()
 ```
 
-```{r,echo=FALSE}
+On charge les données issues de *metabase* et on indique le dossier de travail :
+```{r}
 load(here("noisecapture_data.Rda"))
+here()
+source(here("R","Statistiques.R"))
+#source("./Users/tristanlorino/Documents/GitHub/WorkinprogReze/docs/Statistiques.R")
+
 noisecapture_data <- as.data.frame(noisecapture_data)
 
 trace_table <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean","tags")]) %>%
