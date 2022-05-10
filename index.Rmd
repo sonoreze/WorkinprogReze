@@ -16,21 +16,35 @@ description: "This is a minimal example of using the bookdown package to write a
 
 This is a _sample_ book written in **Markdown**. You can use anything that Pandoc's Markdown supports, e.g., a math equation $a^2 + b^2 = c^2$.
 
-The **bookdown** package can be installed from CRAN or Github:
+GitHub Pages va puiser les pages html dans le dossier **/docs**. Pour déployer le *bookdown* sur Github, on ajoute au fichier _bookdown.yml la commande :
 
 ```{r eval=FALSE}
-install.packages("bookdown")
-# or the development version
-# devtools::install_github("rstudio/bookdown")
+output_dir: "docs"
 ```
 
 Remember each Rmd file contains one and only one chapter, and a chapter is defined by the first-level heading `#`.
 
-To compile this example to PDF, you need XeLaTeX. You are recommended to install TinyTeX (which includes XeLaTeX): <https://yihui.name/tinytex/>.
+```{r,echo=FALSE}
+if (!require("pacman")) install.packages("pacman")
+library(pacman)
+pacman::p_load(here,thematic,lubridate,dplyr,tidyr,stringr,ggplot2,ggforce,forcats,rgdal,sp,sf,
+               rgeos,geoR,tidyr,devtools,leaflet,leaflet.extras,jsonlite,RColorBrewer,
+               viridis,forcats,mapview,scales,flexdashboard,fontawesome,rprojroot,ggthemes,plotly,spacetime,gstat)
+```
 
 ```{r include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(
   .packages(), 'bookdown', 'knitr', 'rmarkdown'
 ), 'packages.bib')
+```
+
+On charge les données issues de *metabase* et on indique le dossier de travail :
+```{r}
+load(here("noisecapture_data.Rda"))
+here()
+source(here("R","Statistiques.R"))
+#source("./Users/tristanlorino/Documents/GitHub/WorkinprogReze/docs/Statistiques.R")
+
+noisecapture_data <- as.data.frame(noisecapture_data)
 ```
