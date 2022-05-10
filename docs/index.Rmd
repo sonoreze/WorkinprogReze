@@ -1,0 +1,118 @@
+---
+title: "Tags"
+author: "Tristan Lorino"
+date: '2022-05-09'
+output: pdf_document
+always_allow_html: true
+#runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(here)
+library(stringr)
+library(sf)
+library(sp)
+library(leaflet)
+library(viridis)
+#library(webshot)
+#webshot::install_phantomjs()
+```
+
+```{r,echo=FALSE}
+load(here("noisecapture_data.Rda"))
+noisecapture_data <- as.data.frame(noisecapture_data)
+
+trace_table <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean","tags")]) %>%
+  arrange(Id,Date) %>%
+  group_by(Id) %>%
+  arrange(Date) %>%
+  mutate(IdTraceReset=cumsum(c(TRUE, as.integer(diff(as.POSIXct(Date)), units = "secs") >= 2L))) %>%
+  ungroup() %>%
+  mutate(IdGlobal=str_c(Id,IdTraceReset)) %>%
+  arrange(IdGlobal) %>%
+  group_by(Id) %>%
+  arrange(IdTraceReset) %>%
+  group_by(IdGlobal) %>%
+  mutate(IdTrace=cur_group_id()) %>%
+  ungroup() %>%
+  distinct(IdTrace, .keep_all = TRUE)
+
+tags_table <- trace_table %>%
+  filter(tags != "") %>%
+  filter(x != "NA") %>%
+  select(-c(IdGlobal,IdTraceReset))
+```
+
+La procédure consiste à :
+
+  * créer un identifiant par trace (suite d'enregistrements successifs) ;
+  * ne garder qu'un enregistrement par trace ;
+  * supprimer les traces qui n'ont pas été taggées, ainsi que celles sans coordonnées GPS :
+  
+```{r,echo=FALSE}
+tags_table[1:10,]
+```
+  
+  * à partir de la colonne « tags », qui contient pour chaque trace (chaque ligne) un ou plusieurs tags séparés par des virgules : créer une nouvelle colonne « tags » avec un seul tag (par ligne), quitte à dupliquer une trace (une ligne) lorsque cette-dernière a plusieurs tags :
+  
+```{r,echo=FALSE}
+tags_table <- tags_table %>%
+      transform(tags = strsplit(as.character(tags),",")) %>%
+      unnest(tags) %>%
+      mutate(TagGroup = case_when(tags == "indoor" | tags == "test" ~ "Condition",
+                                  tags == "wind" | tags == "rain" ~ "Meteo",
+                                  tags == "marine_traffic" | tags == "air_traffic" | tags == "rail" | tags == "road" ~ "Trafic",
+                                  TRUE ~ "Ambiance"))
+```
+
+```{r,echo=FALSE}
+tags_table[1:10,]
+```
+
+Il y a `r round(length(unique(tags_table$IdTrace)) / length(unique(trace_table$IdTrace))*100,2)` % des traces (`r length(unique(tags_table$IdTrace))` sur `r length(unique(trace_table$IdTrace))`) ayant au moins un tag. Voici les effectifs par tags :
+
+```{r,echo=FALSE}
+summary(as.factor(tags_table$tags))
+```
+
+Quatre catégories ont été définies :
+
+  * Météo : *rain* / *wind*
+  * Condition : *indoor* / *test*
+  * Trafic : *road* / *marine_traffic* / *air_traffic* / *rail*
+  * Ambiance : *chatting* / *footsteps* / *water* / *animals* / *vegetation* / *works* / *children* / *music* / *alarms* / *industrial*
+  
+Voici les effectifs par catégorie :
+
+```{r,echo=FALSE,warning=FALSE}
+ggplot(tags_table, aes(x=TagGroup)) +
+        geom_histogram(stat="count")
+```
+
+```{r,echo=FALSE}
+Data_numerique <- tags_table[,c("x","y","TagGroup")]
+pal <- colorFactor(viridis(7), Data_numerique$TagGroup)
+
+leaflet(Data_numerique) %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  addCircleMarkers(lng = ~x, 
+                   lat = ~y, 
+                   radius = 1.5, 
+                   color = pal(Data_numerique$TagGroup),
+                   stroke=FALSE,
+                   fillOpacity = 0.8,
+                   popup = ~TagGroup) %>%
+  addLegend("bottomleft",
+            pal = pal,
+            values = Data_numerique$TagGroup,
+            na.label = "NA",
+            title = "Catégories",
+            #labels = pal2,
+            opacity = .8,
+            )
+```
+
