@@ -1,5 +1,8 @@
-fig:nice-fig
-tab:nice-tab
-prerequisites
-intro
-literature
+présentation
+configuration
+configuration-de-knitr
+déploiement-sur-github-pages
+packages-requis
+données-brutes
+procédure
+final-words

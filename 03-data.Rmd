@@ -1,0 +1,34 @@
+# Données brutes
+
+On créé un dossier **/R** où seront stockés les scripts R. On y place dedans le fichier **Statistiques.R** qui va créer de nombreux tableaux de données à partir des données brutes.
+
+
+On charge les données issues de **metabase** et on compile en entrée le script **Statistiques.R** :
+```{r}
+load(here("noisecapture_data.Rda"))
+here()
+source(here("R","Statistiques.R"))
+```
+
+```{r}
+noisecapture_data <- as.data.frame(noisecapture_data)
+trace_table <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean","tags")]) %>%
+  arrange(Id,Date) %>%
+  group_by(Id) %>%
+  arrange(Date) %>%
+  mutate(IdTraceReset=cumsum(c(TRUE, as.integer(diff(as.POSIXct(Date)), units = "secs") >= 2L))) %>%
+  ungroup() %>%
+  mutate(IdGlobal=str_c(Id,IdTraceReset)) %>%
+  arrange(IdGlobal) %>%
+  group_by(Id) %>%
+  arrange(IdTraceReset) %>%
+  group_by(IdGlobal) %>%
+  mutate(IdTrace=cur_group_id()) %>%
+  ungroup() %>%
+  distinct(IdTrace, .keep_all = TRUE)
+
+tags_table <- trace_table %>%
+  filter(tags != "") %>%
+  filter(x != "NA") %>%
+  select(-c(IdGlobal,IdTraceReset))
+```

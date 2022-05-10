@@ -3,7 +3,10 @@ title: "Sonorezé"
 author: "Tristan Lorino"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
-output: bookdown::gitbook
+output: 
+  config:
+    toc:
+      collapsed: false
 documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
@@ -12,39 +15,27 @@ github-repo: sonoreze/WorkinprogReze
 description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
 ---
 
-# Prerequisites
-
-This is a _sample_ book written in **Markdown**. You can use anything that Pandoc's Markdown supports, e.g., a math equation $a^2 + b^2 = c^2$.
-
-GitHub Pages va puiser les pages html dans le dossier **/docs**. Pour déployer le *bookdown* sur Github, on ajoute au fichier _bookdown.yml la commande :
-
-```{r eval=FALSE}
-output_dir: "docs"
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+knitr::opts_chunk$set(cache =FALSE)
+options(OutDec=",")
+Sys.setlocale("LC_CTYPE","fr_FR.UTF-8")
+knitr::write_bib(c(.packages(), 'bookdown', 'knitr', 'rmarkdown'), 'packages.bib')
 ```
 
-Remember each Rmd file contains one and only one chapter, and a chapter is defined by the first-level heading `#`.
+# Présentation
 
-```{r,echo=FALSE}
-if (!require("pacman")) install.packages("pacman")
-library(pacman)
-pacman::p_load(here,thematic,lubridate,dplyr,tidyr,stringr,ggplot2,ggforce,forcats,rgdal,sp,sf,
-               rgeos,geoR,tidyr,devtools,leaflet,leaflet.extras,jsonlite,RColorBrewer,
-               viridis,forcats,mapview,scales,flexdashboard,fontawesome,rprojroot,ggthemes,plotly,spacetime,gstat)
-```
+Dans RStudio, on installe le package **bookdown**, puis on créé un nouveau projet avec l'option *New Directory* et le modèle *Book Project Using Bookdown*. On appelle **WorkinprogReze** ce projet ; c'est également le nom du dossier qui est créé en local (et ce sera également le nom du repository GitHub).
 
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
-```
+Ce dossier contient :
 
-On charge les données issues de *metabase* et on indique le dossier de travail :
-```{r}
-load(here("noisecapture_data.Rda"))
-here()
-source(here("R","Statistiques.R"))
-#source("./Users/tristanlorino/Documents/GitHub/WorkinprogReze/docs/Statistiques.R")
+  * des fichiers d'extension **Rmd** (*RMarkdown*) pour les pages html à générer, dont le fichier **index.Rmd** qui servira de point de départ pour le site web GitHub ; chaque fichier **Rmd** contient un et un seul chapitre, lequel est défini par la balise `#` ;
+  * un fichier **WorkinprogReze.Rproj** relatif au projet RStudio ;
+  * un fichier **\_bookdown.yml** qui configure la compilation en entrée ;
+  * un fichier **\_output.yml** qui configure la compilation en sortie et le rendu ;
+  * un dossier **\_book** qui contient les pages html générées à partir des fichiers rmd.
+  
 
-noisecapture_data <- as.data.frame(noisecapture_data)
-```
+
+Référence : https://bookdown.org/yihui/bookdown/

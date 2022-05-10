@@ -1,21 +1,38 @@
-# Introduction {#intro}
+# Configuration
 
-You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(intro). If you do not manually label them, there will be automatic labels anyway, e.g., Chapter \@ref(methods).
+## Configuration de knitr
 
-Figures and tables with captions will be placed in `figure` and `table` environments, respectively.
-
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
-par(mar = c(4, 4, .1, .1))
-plot(pressure, type = 'b', pch = 19)
+Pour afficher par défaut les morceaux de code R (**chunks**) :
+```{r, eval=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
-
-```{r nice-tab, tidy=FALSE}
-knitr::kable(
-  head(iris, 20), caption = 'Here is a nice table!',
-  booktabs = TRUE
-)
+Pour que **knitr** retrouve tous ses petits dans l'arborescence du dossier **WorkinprogReze.Rproj** :
+```{r, eval=FALSE}
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 ```
 
-You can write citations, too. For example, we are using the **bookdown** package [@R-bookdown] in this sample book, which was built on top of R Markdown and **knitr** [@xie2015].
+Par défaut on n'utilise pas de cache :
+```{r, eval=FALSE}
+knitr::opts_chunk$set(cache =FALSE)
+``` 
+
+Pour la typo française, on précise que les décimales seront séparées des entiers par une virgule :
+```{r, eval=FALSE}
+options(OutDec=",")
+```
+
+Pour les sorties francisées (par exemple les noms des mois) :
+```{r, eval=FALSE}
+Sys.setlocale("LC_CTYPE","fr_FR.UTF-8")
+```
+
+## Déploiement sur GitHub Pages
+
+GitHub Pages va puiser les pages html dans un dossier nommé **/docs**. Aussi commence-t-on par créer un tel dossier dans le dossier **WorkinprogReze**. 
+
+Pour déployer le **bookdown** sur GitHub, on doit transférer de manière automatique les pages html générées par **knitr** et stockées dans **\_book**, vers le nouveau dossier **/docs**. Pour ce faire, on ajoute au fichier **\_bookdown.yml** la commande :
+
+```{r eval=FALSE}
+output_dir: "docs"
+```

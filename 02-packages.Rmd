@@ -1,0 +1,12 @@
+# Packages requis
+
+Le package **pacman** permet de gérer l'installation préalable, puis le chargement de packages. Voici ceux qui sont utilisés :
+
+```{r}
+if (!require("pacman")) install.packages("pacman")
+library(pacman)
+pacman::p_load(here,thematic,lubridate,dplyr,tidyr,stringr,ggplot2,ggforce,forcats,rgdal,sp,sf,
+               rgeos,geoR,tidyr,devtools,leaflet,leaflet.extras,jsonlite,RColorBrewer,
+               viridis,forcats,mapview,scales,flexdashboard,fontawesome,rprojroot,ggthemes,plotly,spacetime,gstat)
+```
+

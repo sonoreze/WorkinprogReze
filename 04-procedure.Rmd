@@ -1,58 +1,4 @@
----
-title: "Tags"
-author: "Tristan Lorino"
-date: '2022-05-09'
-output: html_document
-#runtime: shiny
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
-knitr::opts_chunk$set(cache =FALSE)
-options(OutDec=",")
-Sys.setlocale("LC_CTYPE","fr_FR.UTF-8")
-```
-
-```{r,echo=FALSE}
-if (!require("pacman")) install.packages("pacman")
-library(pacman)
-pacman::p_load(here,thematic,lubridate,dplyr,tidyr,stringr,ggplot2,ggforce,forcats,rgdal,sp,sf,
-               rgeos,geoR,tidyr,devtools,leaflet,leaflet.extras,jsonlite,RColorBrewer,
-               viridis,forcats,mapview,scales,flexdashboard,fontawesome,rprojroot,ggthemes,plotly,spacetime,gstat)
-#library(webshot)
-#webshot::install_phantomjs()
-```
-
-On charge les données issues de *metabase* et on indique le dossier de travail :
-```{r}
-load(here("noisecapture_data.Rda"))
-here()
-source(here("R","Statistiques.R"))
-#source("./Users/tristanlorino/Documents/GitHub/WorkinprogReze/docs/Statistiques.R")
-
-noisecapture_data <- as.data.frame(noisecapture_data)
-
-trace_table <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean","tags")]) %>%
-  arrange(Id,Date) %>%
-  group_by(Id) %>%
-  arrange(Date) %>%
-  mutate(IdTraceReset=cumsum(c(TRUE, as.integer(diff(as.POSIXct(Date)), units = "secs") >= 2L))) %>%
-  ungroup() %>%
-  mutate(IdGlobal=str_c(Id,IdTraceReset)) %>%
-  arrange(IdGlobal) %>%
-  group_by(Id) %>%
-  arrange(IdTraceReset) %>%
-  group_by(IdGlobal) %>%
-  mutate(IdTrace=cur_group_id()) %>%
-  ungroup() %>%
-  distinct(IdTrace, .keep_all = TRUE)
-
-tags_table <- trace_table %>%
-  filter(tags != "") %>%
-  filter(x != "NA") %>%
-  select(-c(IdGlobal,IdTraceReset))
-```
+# Procédure
 
 La procédure consiste à :
 
@@ -74,10 +20,6 @@ tags_table <- tags_table %>%
                                   tags == "wind" | tags == "rain" ~ "Meteo",
                                   tags == "marine_traffic" | tags == "air_traffic" | tags == "rail" | tags == "road" ~ "Trafic",
                                   TRUE ~ "Ambiance"))
-```
-
-```{r,echo=FALSE}
-tags_table[1:10,]
 ```
 
 Il y a `r round(length(unique(tags_table$IdTrace)) / length(unique(trace_table$IdTrace))*100,2)` % des traces (`r length(unique(tags_table$IdTrace))` sur `r length(unique(trace_table$IdTrace))`) ayant au moins un tag. Voici les effectifs par tags :
@@ -123,3 +65,5 @@ leaflet(Data_numerique) %>%
             )
 ```
 
+
+```
