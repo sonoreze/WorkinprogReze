@@ -20,9 +20,10 @@ knitr::opts_chunk$set(cache =FALSE)
 Pour la typo française, on précise que les décimales seront séparées des entiers par une virgule :
 ```{r, eval=FALSE}
 options(OutDec=",")
+```
 
 Attention à cette dernière option : elle peut causer des désagréments aux légendes générées avec le package **leaflet**.
-```
+
 
 Pour les sorties francisées (par exemple les noms des mois) :
 ```{r, eval=FALSE}

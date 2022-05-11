@@ -190,9 +190,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Par défaut on utilise le cache de <strong>knitr</strong>, ce qui est censé accélérer la compilation :</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="configuration.html#cb4-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">cache =</span><span class="cn">FALSE</span>)</span></code></pre></div>
 <p>Pour la typo française, on précise que les décimales seront séparées des entiers par une virgule :</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="configuration.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">OutDec=</span><span class="st">&quot;,&quot;</span>)</span>
-<span id="cb5-2"><a href="configuration.html#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="configuration.html#cb5-3" aria-hidden="true" tabindex="-1"></a>Attention à cette dernière option <span class="sc">:</span> elle peut causer des désagréments aux légendes générées avec le package <span class="sc">**</span>leaflet<span class="sc">**</span>.</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="configuration.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">OutDec=</span><span class="st">&quot;,&quot;</span>)</span></code></pre></div>
+<p>Attention à cette dernière option : elle peut causer des désagréments aux légendes générées avec le package <strong>leaflet</strong>.</p>
 <p>Pour les sorties francisées (par exemple les noms des mois) :</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="configuration.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setlocale</span>(<span class="st">&quot;LC_CTYPE&quot;</span>,<span class="st">&quot;fr_FR.UTF-8&quot;</span>)</span></code></pre></div>
 </div>

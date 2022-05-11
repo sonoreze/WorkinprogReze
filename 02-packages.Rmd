@@ -2,7 +2,7 @@
 
 Le package **pacman** permet de gérer l'installation préalable, puis le chargement de packages. Voici ceux qui sont utilisés :
 
-```{r}
+```{r,message=FALSE}
 if (!require("pacman")) install.packages("pacman")
 library(pacman)
 pacman::p_load(here,ggplot2,ggforce,ggthemes,thematic,plotly,scales,tidyr,dplyr,lubridate,stringr,forcats,rgdal,sp,sf,

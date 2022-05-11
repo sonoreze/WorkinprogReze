@@ -185,66 +185,66 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">4.1</span> Un identifiant de trace<a href="données.html#un-identifiant-de-trace" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>On créé un dossier <strong>/R</strong> à la racine de <strong>WorkinprogReze</strong>, dans lequel on stockera les scripts R. On y place dedans le fichier <strong>Statistiques.R</strong> qui va créer de nombreux tableaux de données à partir des données brutes.</p>
 <p>On charge les données issues de <strong>metabase</strong> et on compile en entrée le script <strong>Statistiques.R</strong> :</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="données.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">&quot;noisecapture_data.Rda&quot;</span>))</span>
-<span id="cb12-2"><a href="données.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">&quot;R&quot;</span>,<span class="st">&quot;Statistiques.R&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="données.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">&quot;noisecapture_data.Rda&quot;</span>))</span>
+<span id="cb9-2"><a href="données.html#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">&quot;R&quot;</span>,<span class="st">&quot;Statistiques.R&quot;</span>))</span></code></pre></div>
 <p>On va créer, à partir de l’identifiant <strong>Id</strong> des utilisateurs, les variables suivantes :</p>
 <ul>
 <li><strong>IdTraceReset</strong> : c’est un identifiant de trace par utilisateur, qui s’incrémente dès que le temps passé entre deux enregistrements excède 1 s ;</li>
 <li><strong>IdGlobal</strong> qui concatène <strong>Id</strong> et <strong>IdTraceReset</strong>, de manière à avoir un identifiant unique par trace (via <strong>stringr::str_c</strong>);</li>
 <li><strong>IdTrace</strong>, reformulation de l’identifiant de trace sous forme d’identifiant numérique unique (via <strong>dplyr::cur_group_id</strong>).</li>
 </ul>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="données.html#cb13-1" aria-hidden="true" tabindex="-1"></a>noisecapture_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(noisecapture_data)</span>
-<span id="cb13-2"><a href="données.html#cb13-2" aria-hidden="true" tabindex="-1"></a>trace_table <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(noisecapture_data[,<span class="fu">c</span>(<span class="st">&quot;Id&quot;</span>,<span class="st">&quot;Date&quot;</span>,<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>,<span class="st">&quot;leq_mean&quot;</span>,<span class="st">&quot;tags&quot;</span>)]) <span class="sc">%&gt;%</span></span>
-<span id="cb13-3"><a href="données.html#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Id,Date) <span class="sc">%&gt;%</span></span>
-<span id="cb13-4"><a href="données.html#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Id) <span class="sc">%&gt;%</span></span>
-<span id="cb13-5"><a href="données.html#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Date) <span class="sc">%&gt;%</span></span>
-<span id="cb13-6"><a href="données.html#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdTraceReset=</span><span class="fu">cumsum</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="fu">as.integer</span>(<span class="fu">diff</span>(<span class="fu">as.POSIXct</span>(Date)), <span class="at">units =</span> <span class="st">&quot;secs&quot;</span>) <span class="sc">&gt;=</span> 2L))) <span class="sc">%&gt;%</span></span>
-<span id="cb13-7"><a href="données.html#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb13-8"><a href="données.html#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdGlobal=</span><span class="fu">str_c</span>(Id,IdTraceReset)) <span class="sc">%&gt;%</span></span>
-<span id="cb13-9"><a href="données.html#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(IdGlobal) <span class="sc">%&gt;%</span></span>
-<span id="cb13-10"><a href="données.html#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Id) <span class="sc">%&gt;%</span></span>
-<span id="cb13-11"><a href="données.html#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(IdTraceReset) <span class="sc">%&gt;%</span></span>
-<span id="cb13-12"><a href="données.html#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(IdGlobal) <span class="sc">%&gt;%</span></span>
-<span id="cb13-13"><a href="données.html#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdTrace=</span><span class="fu">cur_group_id</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb13-14"><a href="données.html#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb13-15"><a href="données.html#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(IdTrace, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="données.html#cb10-1" aria-hidden="true" tabindex="-1"></a>noisecapture_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(noisecapture_data)</span>
+<span id="cb10-2"><a href="données.html#cb10-2" aria-hidden="true" tabindex="-1"></a>trace_table <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(noisecapture_data[,<span class="fu">c</span>(<span class="st">&quot;Id&quot;</span>,<span class="st">&quot;Date&quot;</span>,<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>,<span class="st">&quot;leq_mean&quot;</span>,<span class="st">&quot;tags&quot;</span>)]) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="données.html#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Id,Date) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="données.html#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Id) <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="données.html#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href="données.html#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdTraceReset=</span><span class="fu">cumsum</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="fu">as.integer</span>(<span class="fu">diff</span>(<span class="fu">as.POSIXct</span>(Date)), <span class="at">units =</span> <span class="st">&quot;secs&quot;</span>) <span class="sc">&gt;=</span> 2L))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="données.html#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="données.html#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdGlobal=</span><span class="fu">str_c</span>(Id,IdTraceReset)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-9"><a href="données.html#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(IdGlobal) <span class="sc">%&gt;%</span></span>
+<span id="cb10-10"><a href="données.html#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Id) <span class="sc">%&gt;%</span></span>
+<span id="cb10-11"><a href="données.html#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(IdTraceReset) <span class="sc">%&gt;%</span></span>
+<span id="cb10-12"><a href="données.html#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(IdGlobal) <span class="sc">%&gt;%</span></span>
+<span id="cb10-13"><a href="données.html#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdTrace=</span><span class="fu">cur_group_id</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb10-14"><a href="données.html#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-15"><a href="données.html#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(IdTrace, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>On supprime ensuite les traces :</p>
 <ul>
 <li>sans tag ;</li>
 <li>dont les coordonnées gps sont manquantes ;</li>
 </ul>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="données.html#cb14-1" aria-hidden="true" tabindex="-1"></a>tags_table <span class="ot">&lt;-</span> trace_table <span class="sc">%&gt;%</span></span>
-<span id="cb14-2"><a href="données.html#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(tags <span class="sc">!=</span> <span class="st">&quot;&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="données.html#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(x <span class="sc">!=</span> <span class="st">&quot;NA&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-4"><a href="données.html#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(IdGlobal,IdTraceReset))</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="données.html#cb11-1" aria-hidden="true" tabindex="-1"></a>tags_table <span class="ot">&lt;-</span> trace_table <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="données.html#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(tags <span class="sc">!=</span> <span class="st">&quot;&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="données.html#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(x <span class="sc">!=</span> <span class="st">&quot;NA&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="données.html#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(IdGlobal,IdTraceReset))</span></code></pre></div>
 </div>
 <div id="question-en-suspens" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> Question en suspens<a href="données.html#question-en-suspens" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Comment déterminer qu’une trace fait plus de 500 m ? En calculant les distances entre les points pris deux à deux, puis en sommant ces distances. Le package <strong>{sf}</strong> fournit la fonction <strong>st_distance</strong> pour le calcul d’une matrice de distances, et <strong>st_length</strong> pour le calcul de la distance rectiligne entre deux points.</p>
 <p>Soient deux points de la piste de glissance, séparés (d’après Google Maps, cf. figure ci-après) par une distance de 898,18 m. Je ne comprends pas pourquoi le résultat retourné par les fonctions de <strong>{sf}</strong> diffèrent du calcul de Google Maps.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="données.html#cb15-1" aria-hidden="true" tabindex="-1"></a>coo <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(</span>
-<span id="cb15-2"><a href="données.html#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fl">47.155448754072374</span>, <span class="sc">-</span><span class="fl">1.6406400682309141</span>,</span>
-<span id="cb15-3"><a href="données.html#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fl">47.15744374926704</span>, <span class="sc">-</span><span class="fl">1.652151433982812</span></span>
-<span id="cb15-4"><a href="données.html#cb15-4" aria-hidden="true" tabindex="-1"></a>), <span class="at">ncol=</span><span class="dv">2</span>,  <span class="at">byrow=</span>T)  </span>
-<span id="cb15-5"><a href="données.html#cb15-5" aria-hidden="true" tabindex="-1"></a>coo_col <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(coo)</span>
-<span id="cb15-6"><a href="données.html#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(coo_col)[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;latitude&quot;</span>,<span class="st">&quot;longitude&quot;</span>)</span>
-<span id="cb15-7"><a href="données.html#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="données.html#cb15-8" aria-hidden="true" tabindex="-1"></a>coord_col <span class="ot">&lt;-</span> <span class="fu">SpatialPointsDataFrame</span>(<span class="at">coords=</span>coo_col[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">data=</span><span class="fu">as.data.frame</span>(coo_col))</span>
-<span id="cb15-9"><a href="données.html#cb15-9" aria-hidden="true" tabindex="-1"></a>coord_col_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(coord_col, <span class="at">crs =</span> <span class="dv">4326</span>, <span class="at">agr =</span> <span class="st">&quot;constant&quot;</span>, <span class="at">remove =</span> F)</span>
-<span id="cb15-10"><a href="données.html#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(coord_col_sf) <span class="ot">&lt;-</span> <span class="dv">4326</span> <span class="co">#EPSG WGS84</span></span>
-<span id="cb15-11"><a href="données.html#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-12"><a href="données.html#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcul de la distance entre les deux points</span></span>
-<span id="cb15-13"><a href="données.html#cb15-13" aria-hidden="true" tabindex="-1"></a>my_coords_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(coo_col, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;latitude&quot;</span>,<span class="st">&quot;longitude&quot;</span>), <span class="at">crs =</span> <span class="dv">4326</span>)</span>
-<span id="cb15-14"><a href="données.html#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="fu">st_distance</span>(coord_col_sf)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="données.html#cb12-1" aria-hidden="true" tabindex="-1"></a>coo <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(</span>
+<span id="cb12-2"><a href="données.html#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fl">47.155448754072374</span>, <span class="sc">-</span><span class="fl">1.6406400682309141</span>,</span>
+<span id="cb12-3"><a href="données.html#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fl">47.15744374926704</span>, <span class="sc">-</span><span class="fl">1.652151433982812</span></span>
+<span id="cb12-4"><a href="données.html#cb12-4" aria-hidden="true" tabindex="-1"></a>), <span class="at">ncol=</span><span class="dv">2</span>,  <span class="at">byrow=</span>T)  </span>
+<span id="cb12-5"><a href="données.html#cb12-5" aria-hidden="true" tabindex="-1"></a>coo_col <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(coo)</span>
+<span id="cb12-6"><a href="données.html#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(coo_col)[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;latitude&quot;</span>,<span class="st">&quot;longitude&quot;</span>)</span>
+<span id="cb12-7"><a href="données.html#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="données.html#cb12-8" aria-hidden="true" tabindex="-1"></a>coord_col <span class="ot">&lt;-</span> <span class="fu">SpatialPointsDataFrame</span>(<span class="at">coords=</span>coo_col[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">data=</span><span class="fu">as.data.frame</span>(coo_col))</span>
+<span id="cb12-9"><a href="données.html#cb12-9" aria-hidden="true" tabindex="-1"></a>coord_col_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(coord_col, <span class="at">crs =</span> <span class="dv">4326</span>, <span class="at">agr =</span> <span class="st">&quot;constant&quot;</span>, <span class="at">remove =</span> F)</span>
+<span id="cb12-10"><a href="données.html#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(coord_col_sf) <span class="ot">&lt;-</span> <span class="dv">4326</span> <span class="co">#EPSG WGS84</span></span>
+<span id="cb12-11"><a href="données.html#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="données.html#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcul de la distance entre les deux points</span></span>
+<span id="cb12-13"><a href="données.html#cb12-13" aria-hidden="true" tabindex="-1"></a>my_coords_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(coo_col, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;latitude&quot;</span>,<span class="st">&quot;longitude&quot;</span>), <span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb12-14"><a href="données.html#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="fu">st_distance</span>(coord_col_sf)</span></code></pre></div>
 <pre><code>## Units: [m]
 ##          [,1]     [,2]
 ## [1,]    0,000 1299,072
 ## [2,] 1299,072    0,000</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="données.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Même résultat avec la fonction ci-dessous (attention : elle</span></span>
-<span id="cb17-2"><a href="données.html#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># n&#39;aime pas les noms de colonnes, c&#39;est pourquoi le jeu de données est coo</span></span>
-<span id="cb17-3"><a href="données.html#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># et pas coo_col)</span></span>
-<span id="cb17-4"><a href="données.html#cb17-4" aria-hidden="true" tabindex="-1"></a>line <span class="ot">=</span> <span class="fu">st_sfc</span>(<span class="fu">st_linestring</span>(coo), <span class="at">crs =</span> <span class="dv">4326</span>)</span>
-<span id="cb17-5"><a href="données.html#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">st_length</span>(line)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="données.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Même résultat avec la fonction ci-dessous (attention : elle</span></span>
+<span id="cb14-2"><a href="données.html#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># n&#39;aime pas les noms de colonnes, c&#39;est pourquoi le jeu de données est coo</span></span>
+<span id="cb14-3"><a href="données.html#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># et pas coo_col)</span></span>
+<span id="cb14-4"><a href="données.html#cb14-4" aria-hidden="true" tabindex="-1"></a>line <span class="ot">=</span> <span class="fu">st_sfc</span>(<span class="fu">st_linestring</span>(coo), <span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb14-5"><a href="données.html#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">st_length</span>(line)</span></code></pre></div>
 <pre><code>## 1299,072 [m]</code></pre>
 <div class="figure">
 <img src="google.png" alt="" />
