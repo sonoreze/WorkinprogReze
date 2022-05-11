@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Sonorezé</title>
+  <title>Chapitre 3 Packages | Sonorezé</title>
   <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
   <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Sonorezé" />
+  <meta property="og:title" content="Chapitre 3 Packages | Sonorezé" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
   <meta name="github-repo" content="sonoreze/WorkinprogReze" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Sonorezé" />
+  <meta name="twitter:title" content="Chapitre 3 Packages | Sonorezé" />
   
   <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-<link rel="next" href="configuration.html"/>
+<link rel="prev" href="configuration.html"/>
+<link rel="next" href="données.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -179,26 +179,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Sonorezé</h1>
-<p class="author"><em>Tristan Lorino</em></p>
-<p class="date"><em>2022-05-11</em></p>
-</div>
-<div id="présentation" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">Chapitre 1</span> Présentation<a href="index.html#présentation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Dans RStudio, on installe le package <strong>bookdown</strong>, puis on créé un nouveau projet avec l’option <em>New Directory</em> et le modèle <em>Book Project Using Bookdown</em>. On appelle <strong>WorkinprogReze</strong> ce projet ; c’est également le nom du dossier qui est créé en local (et ce sera également le nom du repository GitHub).</p>
-<p>Ce dossier contient :</p>
+<div id="packages" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapitre 3</span> Packages<a href="packages.html#packages" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Le package <strong>pacman</strong> permet de gérer l’installation préalable, puis le chargement de packages. Voici ceux qui sont utilisés :</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="packages.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;pacman&quot;</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;pacman&quot;</span>)</span></code></pre></div>
+<pre><code>## Le chargement a nécessité le package : pacman</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="packages.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb10-2"><a href="packages.html#cb10-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(here,ggplot2,ggforce,ggthemes,thematic,plotly,scales,tidyr,dplyr,lubridate,stringr,forcats,rgdal,sp,sf,</span>
+<span id="cb10-3"><a href="packages.html#cb10-3" aria-hidden="true" tabindex="-1"></a>               rgeos,geoR,gstat,spacetime,devtools,leaflet,leaflet.extras,jsonlite,mapview,RColorBrewer,</span>
+<span id="cb10-4"><a href="packages.html#cb10-4" aria-hidden="true" tabindex="-1"></a>               viridis,flexdashboard,fontawesome,rprojroot)</span></code></pre></div>
+<pre><code>## &#39;RandomFields&#39; will NOT use OMP</code></pre>
 <ul>
-<li>des fichiers d’extension <strong>Rmd</strong> (<em>RMarkdown</em>) pour les pages html à générer, dont le fichier <strong>index.Rmd</strong> qui servira de point de départ pour le site web GitHub ; chaque fichier <strong>Rmd</strong> contient un et un seul chapitre, lequel est défini par la balise <code>#</code> ;</li>
-<li>un fichier <strong>WorkinprogReze.Rproj</strong> relatif au projet RStudio ;</li>
-<li>un fichier <strong>_bookdown.yml</strong> qui configure la compilation en entrée ;</li>
-<li>un fichier <strong>_output.yml</strong> qui configure la compilation en sortie et le rendu ;</li>
-<li>un dossier <strong>_book</strong> qui contient les pages html générées à partir des fichiers rmd.</li>
+<li><strong>here</strong> : permet une gestion relative de l’arborescence des fichiers ;</li>
+<li><strong>ggplot2, ggforce, ggthemes, thematic, plotly</strong> : gestion des graphiques ;</li>
+<li><strong>scales</strong> : gestion du format des nombres ;</li>
+<li><strong>tidyr, dplyr</strong> : gestion des données ;</li>
+<li><strong>lubridate</strong> : gestion des dates ;</li>
+<li><strong>forcats</strong> : gestion des variables factorielles ;</li>
+<li><strong>jsonlite, rgdal, sp, sf, geoR, gstat, spacetime</strong> : gestion des données spatiales ;</li>
+<li><strong>leaflet,leaflet.extras, mapview</strong> : gestion des représentations spatiales ;</li>
+<li><strong>RColorBrewer,viridis</strong> : gestion des couleurs ;</li>
+<li><strong>flexdashboard</strong> : gestion du tableau de bord html ;</li>
+<li><strong>fontawesome</strong> : accès aux fontes web ;</li>
+<li><strong>rprojroot</strong> : gestion des fichiers de projet R.</li>
 </ul>
-<p>Attention : la compilation par le bouton <strong>Knit</strong> de RStudio peut faillir dans le rendu du <strong>bookdown</strong>. Il est alors indispensable de saisir dans la console :</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a>bookdown<span class="sc">::</span><span class="fu">render_book</span>()</span></code></pre></div>
-<p>Référence Bookdown : <a href="https://bookdown.org/yihui/bookdown/" class="uri">https://bookdown.org/yihui/bookdown/</a><br />
-Référence Sonorezé : <a href="https://github.com/sonoreze/WorkinprogReze" class="uri">https://github.com/sonoreze/WorkinprogReze</a></p>
 
 </div>
             </section>
@@ -206,8 +210,8 @@ Référence Sonorezé : <a href="https://github.com/sonoreze/WorkinprogReze" cla
           </div>
         </div>
       </div>
-
-<a href="configuration.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="configuration.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="données.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -238,7 +242,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/sonoreze/WorkinprogRezeindex.Rmd",
+"link": "https://github.com/sonoreze/WorkinprogReze02-packages.Rmd",
 "text": "Edit"
 },
 "history": {

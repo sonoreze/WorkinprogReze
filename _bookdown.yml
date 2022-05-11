@@ -1,6 +1,7 @@
-book_filename: "bookdown-demo"
+book_filename: "WorkinprogReze"
 language:
   ui:
-    chapter_name: "Chapter "
+    chapter_name: "Chapitre "
 delete_merged_file: true
 output_dir: "docs"
+rmd_files: ["index.Rmd", "01-intro.Rmd", "02-packages.Rmd", "03-data.Rmd", "04-procedure.Rmd"]

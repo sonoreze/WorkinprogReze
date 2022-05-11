@@ -12,7 +12,7 @@ Pour que **knitr** retrouve tous ses petits dans l'arborescence du dossier **Wor
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 ```
 
-Par défaut on n'utilise pas de cache :
+Par défaut on utilise le cache de **knitr**, ce qui est censé accélérer la compilation :
 ```{r, eval=FALSE}
 knitr::opts_chunk$set(cache =FALSE)
 ``` 
@@ -20,6 +20,8 @@ knitr::opts_chunk$set(cache =FALSE)
 Pour la typo française, on précise que les décimales seront séparées des entiers par une virgule :
 ```{r, eval=FALSE}
 options(OutDec=",")
+
+Attention à cette dernière option : elle peut causer des désagréments aux légendes générées avec le package **leaflet**.
 ```
 
 Pour les sorties francisées (par exemple les noms des mois) :

@@ -6,13 +6,13 @@ La procédure consiste à :
   * ne garder qu'un enregistrement par trace ;
   * supprimer les traces qui n'ont pas été taggées, ainsi que celles sans coordonnées GPS :
   
-```{r,echo=FALSE}
+```{r}
 tags_table[1:10,]
 ```
   
   * à partir de la colonne « tags », qui contient pour chaque trace (chaque ligne) un ou plusieurs tags séparés par des virgules : créer une nouvelle colonne « tags » avec un seul tag (par ligne), quitte à dupliquer une trace (une ligne) lorsque cette-dernière a plusieurs tags :
   
-```{r,echo=FALSE}
+```{r}
 tags_table <- tags_table %>%
       transform(tags = strsplit(as.character(tags),",")) %>%
       unnest(tags) %>%
@@ -24,7 +24,7 @@ tags_table <- tags_table %>%
 
 Il y a `r round(length(unique(tags_table$IdTrace)) / length(unique(trace_table$IdTrace))*100,2)` % des traces (`r length(unique(tags_table$IdTrace))` sur `r length(unique(trace_table$IdTrace))`) ayant au moins un tag. Voici les effectifs par tags :
 
-```{r,echo=FALSE}
+```{r}
 summary(as.factor(tags_table$tags))
 ```
 
@@ -36,13 +36,12 @@ Quatre catégories ont été définies :
   * Ambiance : *chatting* / *footsteps* / *water* / *animals* / *vegetation* / *works* / *children* / *music* / *alarms* / *industrial*
   
 Voici les effectifs par catégorie :
-
-```{r,echo=FALSE,warning=FALSE}
+```{r,warning=FALSE}
 ggplot(tags_table, aes(x=TagGroup)) +
         geom_histogram(stat="count")
 ```
 
-```{r,echo=FALSE}
+```{r}
 Data_numerique <- tags_table[,c("x","y","TagGroup")]
 pal <- colorFactor(viridis(7), Data_numerique$TagGroup)
 
@@ -63,7 +62,4 @@ leaflet(Data_numerique) %>%
             #labels = pal2,
             opacity = .8,
             )
-```
-
-
 ```

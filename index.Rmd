@@ -18,7 +18,7 @@ description: "This is a minimal example of using the bookdown package to write a
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
-knitr::opts_chunk$set(cache =FALSE)
+knitr::opts_chunk$set(cache =TRUE)
 options(OutDec=",")
 Sys.setlocale("LC_CTYPE","fr_FR.UTF-8")
 knitr::write_bib(c(.packages(), 'bookdown', 'knitr', 'rmarkdown'), 'packages.bib')
@@ -36,6 +36,13 @@ Ce dossier contient :
   * un fichier **\_output.yml** qui configure la compilation en sortie et le rendu ;
   * un dossier **\_book** qui contient les pages html générées à partir des fichiers rmd.
   
+  Attention : la compilation par le bouton **Knit** de RStudio peut faillir dans le rendu du **bookdown**. Il est alors indispensable de saisir dans la console :
+  
+```{r, eval=FALSE}
+bookdown::render_book()
+``` 
+  
 
 
-Référence : https://bookdown.org/yihui/bookdown/
+Référence Bookdown : https://bookdown.org/yihui/bookdown/  
+Référence Sonorezé : https://github.com/sonoreze/WorkinprogReze

@@ -1,12 +1,26 @@
-# Packages requis
+# Packages
 
 Le package **pacman** permet de gérer l'installation préalable, puis le chargement de packages. Voici ceux qui sont utilisés :
 
 ```{r}
 if (!require("pacman")) install.packages("pacman")
 library(pacman)
-pacman::p_load(here,thematic,lubridate,dplyr,tidyr,stringr,ggplot2,ggforce,forcats,rgdal,sp,sf,
-               rgeos,geoR,tidyr,devtools,leaflet,leaflet.extras,jsonlite,RColorBrewer,
-               viridis,forcats,mapview,scales,flexdashboard,fontawesome,rprojroot,ggthemes,plotly,spacetime,gstat)
+pacman::p_load(here,ggplot2,ggforce,ggthemes,thematic,plotly,scales,tidyr,dplyr,lubridate,stringr,forcats,rgdal,sp,sf,
+               rgeos,geoR,gstat,spacetime,devtools,leaflet,leaflet.extras,jsonlite,mapview,RColorBrewer,
+               viridis,flexdashboard,fontawesome,rprojroot)
 ```
 
+  * **here** : permet une gestion relative de l'arborescence des fichiers ;
+  * **ggplot2, ggforce, ggthemes, thematic, plotly** : gestion des graphiques ;
+  * **scales** : gestion du format des nombres ;
+  * **tidyr, dplyr** : gestion des données ;
+  * **lubridate** : gestion des dates ;
+  * **forcats** : gestion des variables factorielles ;
+  * **jsonlite, rgdal, sp, sf, geoR, gstat, spacetime** : gestion des données spatiales ;
+  * **leaflet,leaflet.extras, mapview** : gestion des représentations spatiales ;
+  * **RColorBrewer,viridis** : gestion des couleurs ;
+  * **flexdashboard** : gestion du tableau de bord html ;
+  * **fontawesome** : accès aux fontes web ;
+  * **rprojroot** : gestion des fichiers de projet R.
+  
+  
