@@ -30,6 +30,7 @@ Pour les sorties francisées (par exemple les noms des mois) :
 Sys.setlocale("LC_CTYPE","fr_FR.UTF-8")
 ```
 
+
 ## Déploiement sur GitHub Pages
 
 GitHub Pages va puiser les pages html dans un dossier nommé **/docs**. Aussi commence-t-on par créer un tel dossier dans le dossier **WorkinprogReze**. 

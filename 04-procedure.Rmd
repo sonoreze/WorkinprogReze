@@ -22,7 +22,7 @@ tags_table <- tags_table %>%
                                   TRUE ~ "Ambiance"))
 ```
 
-Il y a `r round(length(unique(tags_table$IdTrace)) / length(unique(trace_table$IdTrace))*100,2)` % des traces (`r length(unique(tags_table$IdTrace))` sur `r length(unique(trace_table$IdTrace))`) ayant au moins un tag. Voici les effectifs par tags :
+Voici les effectifs par tags :
 
 ```{r}
 summary(as.factor(tags_table$tags))

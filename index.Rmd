@@ -36,12 +36,15 @@ Ce dossier contient :
   * un fichier **\_output.yml** qui configure la compilation en sortie et le rendu ;
   * un dossier **\_book** qui contient les pages html générées à partir des fichiers rmd.
   
-  Attention : la compilation par le bouton **Knit** de RStudio peut faillir dans le rendu du **bookdown**. Il est alors indispensable de saisir dans la console :
+Attention : la compilation par le bouton **Knit** de RStudio peut faillir dans le rendu du **bookdown**. Il est alors indispensable de saisir dans la console :
   
 ```{r, eval=FALSE}
 bookdown::render_book()
 ``` 
   
+  
+Il arrive parfois que la compilation de **index.Rmd** retourne des messages d'erreur : il peut être utile, dans ce cas de vider le cache de **knitr** (via le menu déroulant à droite du bouton **Knit**).
+
 
 
 Référence Bookdown : https://bookdown.org/yihui/bookdown/  

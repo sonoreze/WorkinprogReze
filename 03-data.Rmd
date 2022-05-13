@@ -1,14 +1,15 @@
 # Données 
 
-## Un identifiant de trace
+## Identifiant de trace
 
 On créé un dossier **/R** à la racine de **WorkinprogReze**, dans lequel on stockera les scripts R. On y place dedans le fichier **Statistiques.R** qui va créer de nombreux tableaux de données à partir des données brutes.
 
 
-On charge les données issues de **metabase** et on compile en entrée le script **Statistiques.R** :
+On charge les données issues de **metabase** qui sont contenues dans le fichier **noisecapture_data.Rda**, puis on compile en entrée deux scripts : **Statistiques.R** pour la génération de tableaux de données et de statistiques, et **Color.R** pour la définition d'une palette de couleurs créée par [https://www.coloringnoise.com/theoretical_background/new-color-scheme/](Beate Tomio)
 ```{r}
 load(here("noisecapture_data.Rda"))
 source(here("R","Statistiques.R"))
+source(here("R","Color.R"))
 ```
 
 On va créer, à partir de l'identifiant **Id** des utilisateurs, les variables suivantes :
@@ -20,7 +21,8 @@ On va créer, à partir de l'identifiant **Id** des utilisateurs, les variables 
   
 ```{r}
 noisecapture_data <- as.data.frame(noisecapture_data)
-trace_table <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean","tags")]) %>%
+
+tags_table_init <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean","tags","accuracy")]) %>%
   arrange(Id,Date) %>%
   group_by(Id) %>%
   arrange(Date) %>%
@@ -32,8 +34,7 @@ trace_table <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean"
   arrange(IdTraceReset) %>%
   group_by(IdGlobal) %>%
   mutate(IdTrace=cur_group_id()) %>%
-  ungroup() %>%
-  distinct(IdTrace, .keep_all = TRUE)
+  ungroup()
 ```
 
 On supprime ensuite les traces :
@@ -42,39 +43,29 @@ On supprime ensuite les traces :
   * dont les coordonnées gps sont manquantes ;
   
 ```{r}
-tags_table <- trace_table %>%
+tags_table <- tags_table_init %>%
   filter(tags != "") %>%
   filter(x != "NA") %>%
-  select(-c(IdGlobal,IdTraceReset))
+  filter(accuracy<20) %>%
+  select(-c(accuracy,IdGlobal,IdTraceReset))
 ```
 
-## Question en suspens
+## Longueur des traces
 
-Comment déterminer qu'une trace fait plus de 500 m ? En calculant les distances entre les points pris deux à deux, puis en sommant ces distances. Le package **{sf}** fournit la fonction **st_distance** pour le calcul d'une matrice de distances, et **st_length** pour le calcul de la distance rectiligne entre deux points.
+Afin que le tag ait un sens, on va supprimer les traces dont la longueur excède 500 m. Pour ce faire, on calcule les distances entre les points géolocalisés consécutifs pris deux à deux (pour chaque trace), puis on calcule la somme des distances par trace, et enfin on ne sélectionne que les traces dont la distance totale est inférieure à 500 m :
 
-Soient deux points de la piste de glissance, séparés (d'après Google Maps, cf. figure ci-après) par une distance de 898,18 m. Je ne comprends pas pourquoi le résultat retourné par les fonctions de **{sf}** diffèrent du calcul de Google Maps.
-
-```{r cars}
-coo <- matrix(c(
-  47.155448754072374, -1.6406400682309141,
-47.15744374926704, -1.652151433982812
-), ncol=2,  byrow=T)  
-coo_col <- data.frame(coo)
-dimnames(coo_col)[[2]] <- c("latitude","longitude")
-
-coord_col <- SpatialPointsDataFrame(coords=coo_col[,1:2], data=as.data.frame(coo_col))
-coord_col_sf <- st_as_sf(coord_col, crs = 4326, agr = "constant", remove = F)
-st_crs(coord_col_sf) <- 4326 #EPSG WGS84
-
-# Calcul de la distance entre les deux points
-my_coords_sf <- st_as_sf(coo_col, coords = c("latitude","longitude"), crs = 4326)
-st_distance(coord_col_sf)
-
-# Même résultat avec la fonction ci-dessous (attention : elle
-# n'aime pas les noms de colonnes, c'est pourquoi le jeu de données est coo
-# et pas coo_col)
-line = st_sfc(st_linestring(coo), crs = 4326)
-st_length(line)
+```{r}
+tags_table <- tags_table %>%
+  st_as_sf(coords = c("x","y"),remove = F) %>%
+  st_set_crs(4326) %>%
+  group_by(IdTrace) %>%
+  mutate(
+    lead = geometry[row_number() + 1],
+    distance = st_distance(geometry, lead, by_element = T),
+  ) %>%
+  mutate(DistanceTotale = sum(as.numeric(distance),na.rm=TRUE)) %>%
+  select(-c(lead)) %>%
+  filter(DistanceTotale<500)
 ```
 
-![Piste de glissance.](google.png)
+On passe de `r length(unique(rle(tags_table_init$IdTrace)$values))` traces initialement à `r length(unique(rle(tags_table$IdTrace)$values))`.

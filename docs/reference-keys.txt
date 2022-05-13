@@ -4,6 +4,6 @@ configuration-de-knitr
 déploiement-sur-github-pages
 packages
 données
-un-identifiant-de-trace
-question-en-suspens
+identifiant-de-trace
+longueur-des-traces
 procédure
