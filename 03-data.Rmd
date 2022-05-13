@@ -68,4 +68,4 @@ tags_table <- tags_table %>%
   filter(DistanceTotale<500)
 ```
 
-On passe de `r length(unique(rle(tags_table_init$IdTrace)$values))` traces initialement à `r length(unique(rle(tags_table$IdTrace)$values))`.
+On passe de `r length(unique(rle(tags_table_init$IdTrace)$values))` traces initialement à `r length(unique(rle(tags_table$IdTrace)$values))`, soit une conservation de `r round(length(unique(rle(tags_table$IdTrace)$values))/length(unique(rle(tags_table_init$IdTrace)$values))*100,2)` % des traces.

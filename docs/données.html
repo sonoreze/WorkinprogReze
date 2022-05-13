@@ -234,7 +234,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-9"><a href="données.html#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DistanceTotale =</span> <span class="fu">sum</span>(<span class="fu">as.numeric</span>(distance),<span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb12-10"><a href="données.html#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(lead)) <span class="sc">%&gt;%</span></span>
 <span id="cb12-11"><a href="données.html#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(DistanceTotale<span class="sc">&lt;</span><span class="dv">500</span>)</span></code></pre></div>
-<p>On passe de 1104 traces initialement à 639.</p>
+<p>On passe de 1104 traces initialement à 639, soit une conservation de 57,88 % des traces.</p>
 
 </div>
 </div>
