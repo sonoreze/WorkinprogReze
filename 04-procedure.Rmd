@@ -1,16 +1,15 @@
-# Procédure
+# Tags
 
-La procédure consiste à :
+Voici les données :
 
-  * créer un identifiant par trace (suite d'enregistrements successifs) ;
-  * ne garder qu'un enregistrement par trace ;
-  * supprimer les traces qui n'ont pas été taggées, ainsi que celles sans coordonnées GPS :
-  
 ```{r}
 tags_table[1:10,]
 ```
-  
-  * à partir de la colonne « tags », qui contient pour chaque trace (chaque ligne) un ou plusieurs tags séparés par des virgules : créer une nouvelle colonne « tags » avec un seul tag (par ligne), quitte à dupliquer une trace (une ligne) lorsque cette-dernière a plusieurs tags :
+
+La procédure de traitement des tags consiste à :
+
+  * ne garder qu'un enregistrement par trace ;
+  * à partir de la colonne **tags**, qui contient pour chaque trace (chaque ligne) un ou plusieurs tags séparés par des virgules : créer une nouvelle colonne **tags** avec un seul tag (par ligne), quitte à dupliquer une trace (une ligne) lorsque cette-dernière a plusieurs tags :
   
 ```{r}
 tags_table <- tags_table %>%
@@ -41,6 +40,8 @@ Voici les effectifs par catégorie :
 ggplot(tags_table, aes(x=TagGroup)) +
         geom_histogram(stat="count")
 ```
+
+Voici une représentation spatiale des catégories de tags :
 
 ```{r}
 Data_numerique <- tags_table[,c("x","y","TagGroup")]
