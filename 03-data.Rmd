@@ -5,7 +5,7 @@
 On créé un dossier **/R** à la racine de **WorkinprogReze**, dans lequel on stockera les scripts R. On y place dedans le fichier **Statistiques.R** qui va créer de nombreux tableaux de données à partir des données brutes.
 
 
-On charge les données issues de **metabase** qui sont contenues dans le fichier **noisecapture_data.Rda**, puis on compile en entrée deux scripts : **Statistiques.R** pour la génération de tableaux de données et de statistiques, et **Color.R** pour la définition d'une palette de couleurs créée par [https://www.coloringnoise.com/theoretical_background/new-color-scheme/](Beate Tomio)
+On charge les données issues de **metabase** qui sont contenues dans le fichier **noisecapture_data.Rda**, puis on compile en entrée deux scripts : **Statistiques.R** pour la génération de tableaux de données et de statistiques, et **Color.R** pour la définition d'une palette de couleurs créée par [Beate Tomio](https://www.coloringnoise.com/theoretical_background/new-color-scheme/)
 ```{r}
 load(here("noisecapture_data.Rda"))
 source(here("R","Statistiques.R"))

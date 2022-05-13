@@ -14,9 +14,10 @@ tags_table[1:10,]
   
 ```{r}
 tags_table <- tags_table %>%
-      transform(tags = strsplit(as.character(tags),",")) %>%
-      unnest(tags) %>%
-      mutate(TagGroup = case_when(tags == "indoor" | tags == "test" ~ "Condition",
+  distinct(IdTrace, .keep_all = TRUE) %>%
+  transform(tags = strsplit(as.character(tags),",")) %>%
+  unnest(tags) %>%
+  mutate(TagGroup = case_when(tags == "indoor" | tags == "test" ~ "Condition",
                                   tags == "wind" | tags == "rain" ~ "Meteo",
                                   tags == "marine_traffic" | tags == "air_traffic" | tags == "rail" | tags == "road" ~ "Trafic",
                                   TRUE ~ "Ambiance"))
