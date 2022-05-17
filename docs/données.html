@@ -23,7 +23,7 @@
 <meta name="author" content="Tristan Lorino" />
 
 
-<meta name="date" content="2022-05-13" />
+<meta name="date" content="2022-05-17" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -194,47 +194,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><strong>IdGlobal</strong> qui concatène <strong>Id</strong> et <strong>IdTraceReset</strong>, de manière à avoir un identifiant unique par trace (via <strong>stringr::str_c</strong>);</li>
 <li><strong>IdTrace</strong>, reformulation de l’identifiant de trace sous forme d’identifiant numérique unique (via <strong>dplyr::cur_group_id</strong>).</li>
 </ul>
+<p>On supprime ensuite les traces :</p>
+<ul>
+<li>sans tag ;</li>
+<li>dont les coordonnées gps sont manquantes.</li>
+</ul>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="données.html#cb10-1" aria-hidden="true" tabindex="-1"></a>noisecapture_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(noisecapture_data)</span>
 <span id="cb10-2"><a href="données.html#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="données.html#cb10-3" aria-hidden="true" tabindex="-1"></a>tags_table_init <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(noisecapture_data[,<span class="fu">c</span>(<span class="st">&quot;Id&quot;</span>,<span class="st">&quot;Date&quot;</span>,<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>,<span class="st">&quot;leq_mean&quot;</span>,<span class="st">&quot;tags&quot;</span>,<span class="st">&quot;accuracy&quot;</span>)]) <span class="sc">%&gt;%</span></span>
 <span id="cb10-4"><a href="données.html#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Id,Date) <span class="sc">%&gt;%</span></span>
-<span id="cb10-5"><a href="données.html#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Id) <span class="sc">%&gt;%</span></span>
-<span id="cb10-6"><a href="données.html#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Date) <span class="sc">%&gt;%</span></span>
-<span id="cb10-7"><a href="données.html#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdTraceReset=</span><span class="fu">cumsum</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="fu">as.integer</span>(<span class="fu">diff</span>(<span class="fu">as.POSIXct</span>(Date)), <span class="at">units =</span> <span class="st">&quot;secs&quot;</span>) <span class="sc">&gt;=</span> 2L))) <span class="sc">%&gt;%</span></span>
-<span id="cb10-8"><a href="données.html#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb10-9"><a href="données.html#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdGlobal=</span><span class="fu">str_c</span>(Id,IdTraceReset)) <span class="sc">%&gt;%</span></span>
-<span id="cb10-10"><a href="données.html#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(IdGlobal) <span class="sc">%&gt;%</span></span>
-<span id="cb10-11"><a href="données.html#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Id) <span class="sc">%&gt;%</span></span>
-<span id="cb10-12"><a href="données.html#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(IdTraceReset) <span class="sc">%&gt;%</span></span>
-<span id="cb10-13"><a href="données.html#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(IdGlobal) <span class="sc">%&gt;%</span></span>
-<span id="cb10-14"><a href="données.html#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdTrace=</span><span class="fu">cur_group_id</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb10-15"><a href="données.html#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
-<p>On supprime ensuite les traces :</p>
-<ul>
-<li>sans tag ;</li>
-<li>dont les coordonnées gps sont manquantes ;</li>
-</ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="données.html#cb11-1" aria-hidden="true" tabindex="-1"></a>tags_table <span class="ot">&lt;-</span> tags_table_init <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="données.html#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(tags <span class="sc">!=</span> <span class="st">&quot;&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href="données.html#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(x <span class="sc">!=</span> <span class="st">&quot;NA&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="données.html#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(accuracy<span class="sc">&lt;</span><span class="dv">20</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-5"><a href="données.html#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(accuracy,IdGlobal,IdTraceReset))</span></code></pre></div>
+<span id="cb10-5"><a href="données.html#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(tags <span class="sc">!=</span> <span class="st">&quot;&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href="données.html#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(x <span class="sc">!=</span> <span class="st">&quot;NA&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="données.html#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(accuracy<span class="sc">&lt;</span><span class="dv">20</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="données.html#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Id) <span class="sc">%&gt;%</span></span>
+<span id="cb10-9"><a href="données.html#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb10-10"><a href="données.html#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdTraceReset=</span><span class="fu">cumsum</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="fu">as.integer</span>(<span class="fu">diff</span>(<span class="fu">as.POSIXct</span>(Date)), <span class="at">units =</span> <span class="st">&quot;secs&quot;</span>) <span class="sc">&gt;=</span> 2L))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-11"><a href="données.html#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-12"><a href="données.html#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdGlobal=</span><span class="fu">str_c</span>(Id,IdTraceReset)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-13"><a href="données.html#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(IdGlobal) <span class="sc">%&gt;%</span></span>
+<span id="cb10-14"><a href="données.html#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Id) <span class="sc">%&gt;%</span></span>
+<span id="cb10-15"><a href="données.html#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(IdTraceReset) <span class="sc">%&gt;%</span></span>
+<span id="cb10-16"><a href="données.html#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(IdGlobal) <span class="sc">%&gt;%</span></span>
+<span id="cb10-17"><a href="données.html#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">IdTrace=</span><span class="fu">cur_group_id</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb10-18"><a href="données.html#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-19"><a href="données.html#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(accuracy,IdGlobal,IdTraceReset))</span></code></pre></div>
 </div>
 <div id="longueur-des-traces" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> Longueur des traces<a href="données.html#longueur-des-traces" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Afin que le tag ait un sens, on va supprimer les traces dont la longueur excède 500 m. Pour ce faire, on calcule les distances entre les points géolocalisés consécutifs pris deux à deux (pour chaque trace), puis on calcule la somme des distances par trace, et enfin on ne sélectionne que les traces dont la distance totale est inférieure à 500 m :</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="données.html#cb12-1" aria-hidden="true" tabindex="-1"></a>tags_table <span class="ot">&lt;-</span> tags_table <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="données.html#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>),<span class="at">remove =</span> F) <span class="sc">%&gt;%</span></span>
-<span id="cb12-3"><a href="données.html#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_set_crs</span>(<span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-4"><a href="données.html#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(IdTrace) <span class="sc">%&gt;%</span></span>
-<span id="cb12-5"><a href="données.html#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb12-6"><a href="données.html#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">lead =</span> geometry[<span class="fu">row_number</span>() <span class="sc">+</span> <span class="dv">1</span>],</span>
-<span id="cb12-7"><a href="données.html#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">distance =</span> <span class="fu">st_distance</span>(geometry, lead, <span class="at">by_element =</span> T),</span>
-<span id="cb12-8"><a href="données.html#cb12-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb12-9"><a href="données.html#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DistanceTotale =</span> <span class="fu">sum</span>(<span class="fu">as.numeric</span>(distance),<span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-10"><a href="données.html#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(lead)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-11"><a href="données.html#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(DistanceTotale<span class="sc">&lt;</span><span class="dv">500</span>)</span></code></pre></div>
-<p>On passe de 1104 traces initialement à 639, soit une conservation de 57,88 % des traces.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="données.html#cb11-1" aria-hidden="true" tabindex="-1"></a>tags_table <span class="ot">&lt;-</span> tags_table_init <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="données.html#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>),<span class="at">remove =</span> F) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="données.html#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_set_crs</span>(<span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="données.html#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(IdTrace) <span class="sc">%&gt;%</span></span>
+<span id="cb11-5"><a href="données.html#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-6"><a href="données.html#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">lead =</span> geometry[<span class="fu">row_number</span>() <span class="sc">+</span> <span class="dv">1</span>],</span>
+<span id="cb11-7"><a href="données.html#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Dist =</span> <span class="fu">st_distance</span>(geometry, lead, <span class="at">by_element =</span> T),</span>
+<span id="cb11-8"><a href="données.html#cb11-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-9"><a href="données.html#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DistTot =</span> <span class="fu">sum</span>(<span class="fu">as.numeric</span>(Dist),<span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-10"><a href="données.html#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(lead)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-11"><a href="données.html#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(DistTot<span class="sc">&lt;</span><span class="dv">500</span>)</span></code></pre></div>
 
 </div>
 </div>

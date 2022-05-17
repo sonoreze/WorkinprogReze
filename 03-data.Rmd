@@ -18,12 +18,19 @@ On va créer, à partir de l'identifiant **Id** des utilisateurs, les variables 
   * **IdGlobal** qui concatène **Id** et **IdTraceReset**, de manière à avoir un identifiant unique par trace (via **stringr::str\_c**);
   * **IdTrace**, reformulation de l'identifiant de trace sous forme d'identifiant numérique unique (via **dplyr::cur\_group\_id**).
   
+On supprime ensuite les traces :
+
+  * sans tag ;
+  * dont les coordonnées gps sont manquantes.
   
 ```{r}
 noisecapture_data <- as.data.frame(noisecapture_data)
 
 tags_table_init <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean","tags","accuracy")]) %>%
   arrange(Id,Date) %>%
+  filter(tags != "") %>%
+  filter(x != "NA") %>%
+  filter(accuracy<20) %>%
   group_by(Id) %>%
   arrange(Date) %>%
   mutate(IdTraceReset=cumsum(c(TRUE, as.integer(diff(as.POSIXct(Date)), units = "secs") >= 2L))) %>%
@@ -34,38 +41,25 @@ tags_table_init <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_m
   arrange(IdTraceReset) %>%
   group_by(IdGlobal) %>%
   mutate(IdTrace=cur_group_id()) %>%
-  ungroup()
-```
-
-On supprime ensuite les traces :
-
-  * sans tag ;
-  * dont les coordonnées gps sont manquantes ;
-  
-```{r}
-tags_table <- tags_table_init %>%
-  filter(tags != "") %>%
-  filter(x != "NA") %>%
-  filter(accuracy<20) %>%
+  ungroup() %>%
   select(-c(accuracy,IdGlobal,IdTraceReset))
 ```
 
+  
 ## Longueur des traces
 
 Afin que le tag ait un sens, on va supprimer les traces dont la longueur excède 500 m. Pour ce faire, on calcule les distances entre les points géolocalisés consécutifs pris deux à deux (pour chaque trace), puis on calcule la somme des distances par trace, et enfin on ne sélectionne que les traces dont la distance totale est inférieure à 500 m :
 
 ```{r}
-tags_table <- tags_table %>%
+tags_table <- tags_table_init %>%
   st_as_sf(coords = c("x","y"),remove = F) %>%
   st_set_crs(4326) %>%
   group_by(IdTrace) %>%
   mutate(
     lead = geometry[row_number() + 1],
-    distance = st_distance(geometry, lead, by_element = T),
+    Dist = st_distance(geometry, lead, by_element = T),
   ) %>%
-  mutate(DistanceTotale = sum(as.numeric(distance),na.rm=TRUE)) %>%
+  mutate(DistTot = sum(as.numeric(Dist),na.rm=TRUE)) %>%
   select(-c(lead)) %>%
-  filter(DistanceTotale<500)
+    filter(DistTot<500)
 ```
-
-On passe de `r length(unique(rle(tags_table_init$IdTrace)$values))` traces initialement à `r length(unique(rle(tags_table$IdTrace)$values))`, soit une conservation de `r round(length(unique(rle(tags_table$IdTrace)$values))/length(unique(rle(tags_table_init$IdTrace)$values))*100,2)` % des traces.

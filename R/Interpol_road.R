@@ -10,6 +10,9 @@ noisecapture_data <- as.data.frame(noisecapture_data)
 # Le package sf accepte des noms de champs de 7 caractères max
 tags_table <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean","tags","accuracy")]) %>%
   arrange(Id,Date) %>%
+  filter(tags != "") %>%
+  filter(x != "NA") %>%
+  filter(accuracy<20) %>%
   group_by(Id) %>%
   arrange(Date) %>%
   mutate(IdTraceReset=cumsum(c(TRUE, as.integer(diff(as.POSIXct(Date)), units = "secs") >= 2L))) %>%
@@ -21,9 +24,6 @@ tags_table <- as.data.frame(noisecapture_data[,c("Id","Date","x","y","leq_mean",
   group_by(IdGlobal) %>%
   mutate(IdTrace=cur_group_id()) %>%
   ungroup() %>%
-  filter(tags != "") %>%
-  filter(x != "NA") %>%
-  filter(accuracy<20) %>%
   select(-c(accuracy,IdGlobal,IdTraceReset)) %>%
   st_as_sf(coords = c("x","y"),remove = F) %>%
   st_set_crs(4326) %>%
