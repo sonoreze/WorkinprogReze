@@ -19,7 +19,7 @@ description: "This is a minimal example of using the bookdown package to write a
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 knitr::opts_chunk$set(cache =TRUE)
-options(OutDec=",")
+options(OutDec=".")
 Sys.setlocale("LC_CTYPE","fr_FR.UTF-8")
 knitr::write_bib(c(.packages(), 'bookdown', 'knitr', 'rmarkdown'), 'packages.bib')
 ```

@@ -36,8 +36,12 @@ averageGeolocation <- function(coords)
   }
 
 #Exemple
-#coords <- matrix(c(47.15461,47.15418,-1.63409,-1.63212), ncol=2)
-#averageGeolocation(coords)
+coords <- matrix(c(47.15461,47.15418,-1.63409,-1.63212), ncol=2)
+coords[3,] <- averageGeolocation(coords)
+
+st_as_sf(coords = c("x", "y")) %>% 
+#   st_set_crs(4326)
+# mapview(IdMax)
 
 
 library(sf)
@@ -69,49 +73,4 @@ coo <- matrix(c(
   ), ncol=2,  byrow=T)  
 coo_col <- data.frame(coo)
 dimnames(coo_col)[[2]] <- c("latitude","longitude")
-
-# Calcul de la matrice des distances entre les points
-my_coords_sf <- st_as_sf(coo_col, coords = c("latitude","longitude"), crs = 4326)
-st_distance(my_coords_sf)
-
-#Vérification par addition des distances entre
-# les points pris deux à deux: 1,811 km
-1287.34575 + 45.93188 + 100.185 + 118.19404 + 94.80308 + 68.05584 + 35.43246 + 61.84391
-
-# C'est ce que retourne la fonction ci-dessous (attention : elle
-# n'aime pas les noms de colonnes, c'est pourquoi le jeu de données est coo
-# et pas coo_col)
-line = st_sfc(st_linestring(coo), crs = 4326)
-st_length(line)
-
-####################################
-id22 <- as.matrix(data_trace[data_trace$IdTrace == 22,c("x","y")])
-line = st_sfc(st_linestring(id22), crs = 4326)
-st_length(line)
-
-
-my_coords_sf <- st_as_sf(id22, coords = c("x", "y"), crs = 4326)
-dmat <- st_distance(my_coords_sf)
-dmat
-
-for (i in 1:dim(id22)[1])
-  { tot <- tot + dmat[i+1,i] } 
-tot
-
-################### LIGNE DROITE : 898,18 m
-coo <- matrix(c(
-  47.155448754072374, -1.6406400682309141,
-47.15744374926704, -1.652151433982812
-), ncol=2,  byrow=T)  
-coo_col <- data.frame(coo)
-dimnames(coo_col)[[2]] <- c("latitude","longitude")
-
-# Calcul de la matrice des distances entre les points
-my_coords_sf <- st_as_sf(coo_col, coords = c("latitude","longitude"), crs = 4326)
-st_distance(my_coords_sf)
-
-# Même résultat avec la fonction ci-dessous (attention : elle
-# n'aime pas les noms de colonnes, c'est pourquoi le jeu de données est coo
-# et pas coo_col)
-line = st_sfc(st_linestring(coo), crs = 4326)
-st_length(line)
+mapview(coo)
